@@ -3,10 +3,10 @@ Required Libraries: requests, flask
 import requests
 from flask import Flask, request, jsonify
 
-# Replace these with your actual API credentials
-ASANA_ACCESS_TOKEN = 'ASANA_ACCESS_TOKEN'
-AIRTABLE_API_KEY = 'AIRTABLE_API_KEY'
-AIRTABLE_BASE_ID = 'AIRTABLE_BASE_ID'
+//Replace these with your actual API credentials
+ASANA_ACCESS_TOKEN = '1/1205215970437310:a34883da36c6ee6775559f6e7c686f26'
+AIRTABLE_API_KEY = 'patlnDu5o6bCh8E86.d63b670e013cea331c83895a9d9784c8371d04a9ce7f099e8e499e769d1631d4'
+AIRTABLE_BASE_ID = 'appZQVspiSsQyucU0.'
 
 app = Flask(_name_)
 
@@ -28,7 +28,7 @@ def handle_new_task(task):
 
     airtable_url = f'https://api.airtable.com/v0/{AIRTABLE_BASE_ID}/Asana%20Tasks'
     headers = {
-        'Authorization': f'Bearer {AIRTABLE_API_KEY}',
+        'Authorization': f'Bearer {d63b670e013cea331c83895a9d9784c8371d04a9ce7f099e8e499e769d1631d4}',
         'Content-Type': 'application/json'
     }
     data = {
