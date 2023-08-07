@@ -1,50 +1,78 @@
-Required Libraries: requests, flask
+const fetch = require('node-fetch');
 
-import requests
-from flask import Flask, request, jsonify
+// Asana API Configuration
+const asanaToken = '1205215970437310';
+const asanaProjectId = '1205220311871248';
 
-//Replace these with your actual API credentials
-ASANA_ACCESS_TOKEN = '1/1205215970437310:a34883da36c6ee6775559f6e7c686f26'
-AIRTABLE_API_KEY = 'patlnDu5o6bCh8E86.d63b670e013cea331c83895a9d9784c8371d04a9ce7f099e8e499e769d1631d4'
-AIRTABLE_BASE_ID = 'appZQVspiSsQyucU0.'
+// Airtable API Configuration
+const airtableApiKey = 'patlnDu5o6bCh8E86.d63b670e013cea331c83895a9d9784c8371d04a9ce7f099e8e499e769d1631d4';
+const airtableBaseId = 'appZQVspiSsQyucU0';
+const airtableTable = 'Asana and airtables intergration';
 
-app = Flask(_name_)
+async function createAirtableTask(taskData) {
+  const url = `https://api.airtable.com/v0/${appZQVspiSsQyucU0}/${Asana_and _airtables _intergration}`;
+  const headers = {
+    Authorization: `Bearer ${airtableApiKey}`,
+    'Content-Type': 'application/json',
+  };
 
-@app.route('/asana_webhook', methods=['POST'])
-def asana_webhook_handler():
-    data = request.get_json()
-    if data.get('events'):
-        for event in data['events']:
-            if event.get('resource_type') == 'task' and event.get('action') == 'added':
-                handle_new_task(event['resource'])
-    return jsonify({'success': True})
+  const requestBody = {
+    records: [
+      {
+        fields: {
+          'Task ID': taskData.task_id,
+          'Name': taskData.name,
+          'Assignee': taskData.assignee,
+          'Due Date': taskData.due_date,
+          'Description': taskData.description,
+        },
+      },
+    ],
+  };
 
-def handle_new_task(task):
-    task_id = task['gid']
-    name = task['name']
-    assignee = task.get('assignee', {}).get('name', 'Unassigned')
-    due_date = task.get('due_on', 'No Due Date')
-    description = task.get('notes', '')
+  const response = await fetch(url, {
+    method: 'POST',
+    headers: headers,
+    body: JSON.stringify(requestBody),
+  });
 
-    airtable_url = f'https://api.airtable.com/v0/{AIRTABLE_BASE_ID}/Asana%20Tasks'
-    headers = {
-        'Authorization': f'Bearer {d63b670e013cea331c83895a9d9784c8371d04a9ce7f099e8e499e769d1631d4}',
-        'Content-Type': 'application/json'
-    }
-    data = {
-        'fields': {
-            'Task ID': task_id,
-            'Name': name,
-            'Assignee': assignee,
-            'Due Date': due_date,
-            'Description': description
-        }
-    }
-    response = requests.post(appZQVspiSsQyucU0, headers=headers, json=data)
-    if response.status_code == 200:
-        print('Task copied to Airtable successfully!')
-    else:
-        print('Failed to copy task to Airtable.')
+  if (response.ok) {
+    const responseBody = await response.json();
+    console.log('Task copied to Airtable:', responseBody.records[0].id);
+  } else {
+    console.error('Error copying task to Airtable:', response.statusText);
+  }
+}
 
-if _name_ == '_main_':
-    app.run(host='0.0.0.0', port=8080)
+async function fetchNewAsanaTasks() {
+  const url = `https://app.asana.com/api/1.0/projects/${1205220311871248}/tasks`;
+  const headers = {
+    Authorization: `Bearer ${1205215970437310}`,
+  };
+
+  const response = await fetch(url, {
+    headers: headers,
+  });
+
+  if (response.ok) {
+    const responseBody = await response.json();
+    const tasks = responseBody.data;
+
+    tasks.forEach((task) => {
+      const taskData = {
+        task_id: task.gid,
+        name: task.name,
+        assignee: task.assignee.name,
+        due_date: task.due_on,
+        description: task.notes,
+      };
+
+      createAirtableTask(taskData);
+    });
+  } else {
+    console.error('Error fetching tasks from Asana:', response.statusText);
+  }
+}
+
+// Trigger the integration
+fetchNewAsanaTasks();
