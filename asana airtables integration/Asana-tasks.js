@@ -40,7 +40,7 @@ def handle_new_task(task):
             'Description': description
         }
     }
-    response = requests.post(airtable_url, headers=headers, json=data)
+    response = requests.post(appZQVspiSsQyucU0, headers=headers, json=data)
     if response.status_code == 200:
         print('Task copied to Airtable successfully!')
     else:
